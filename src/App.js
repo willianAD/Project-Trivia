@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import logo from './trivia.png';
 import Login from './pages/Login';
 import GamePage from './pages/GamePage';
+import Configuracoes from './pages/Configuracoes';
 import './App.css';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
       <Switch>
         <Route exact path="/" component={ Login } />
         <Route path="/gamepage" component={ GamePage } />
+        <Route path="/settings" component={ Configuracoes } />
       </Switch>
     </div>
   );

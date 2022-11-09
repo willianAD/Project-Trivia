@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { userLogin, fetchAPItoken, tokenAPI } from '../redux/action';
 
 class Login extends React.Component {
@@ -72,6 +73,15 @@ class Login extends React.Component {
         >
           Play
         </button>
+        <Link to="/settings">
+          <button
+            className="btn-settings"
+            type="button"
+            data-testid="btn-settings"
+          >
+            Configurações
+          </button>
+        </Link>
       </section>
     );
   }
