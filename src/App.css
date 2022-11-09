@@ -4,10 +4,6 @@ body {
   padding: 0;
 }
 
-.App {
-  text-align: center;
-}
-
 .App-logo {
   height: 15vmin;
   pointer-events: none;
@@ -28,7 +24,8 @@ body {
   }
 }
 
-.App-header {
+.App {
+  text-align: center;
   align-items: center;
   background-color: #282c34;
   color: white;
