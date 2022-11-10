@@ -31,11 +31,11 @@ class Login extends React.Component {
 
   buttonClick = async () => {
     const { history, dispatch } = this.props;
-    const { email } = this.state;
+    const { email, name } = this.state;
     const myToken = await fetchAPItoken();
     localStorage.setItem('token', (myToken.token));
     dispatch(tokenAPI(myToken.token));
-    dispatch(userLogin(email));
+    dispatch(userLogin({ email, name }));
     history.push('/gamepage');
   };
 

@@ -11,7 +11,8 @@ const login = (state = INITIAL_STATE, action) => {
   case ADD_LOGIN:
     return {
       ...state,
-      email: action.payload,
+      email: action.payload.email,
+      name: action.payload.name,
     };
   case TOKEN_API:
     return {
