@@ -1,11 +1,19 @@
+.App {
+  align-items: center;
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(10px + 2vmin);
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
 body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-.App {
-  text-align: center;
 }
 
 .App-logo {
@@ -26,17 +34,6 @@ body {
   .App-logo {
     animation: shake infinite 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   }
-}
-
-.App-header {
-  align-items: center;
-  background-color: #282c34;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  font-size: calc(10px + 2vmin);
-  justify-content: center;
-  min-height: 100vh;
 }
 
 .App-link {
