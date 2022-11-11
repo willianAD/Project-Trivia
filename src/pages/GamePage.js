@@ -12,6 +12,9 @@ class GamePage extends React.Component {
       loading: false,
       index: 0,
       answers: [],
+      greenButton: { border: '' },
+      redButton: { border: '' },
+      buttonClickNext: false,
     };
   }
 
@@ -52,9 +55,30 @@ class GamePage extends React.Component {
     }
   };
 
+  buttonClick = () => {
+    this.setState({
+      greenButton: { border: '3px solid rgb(6, 240, 15)' },
+      redButton: { border: '3px solid red' },
+      buttonClickNext: true,
+    });
+  };
+
+  buttonNext = () => {
+    const { index, arrayAPI } = this.state;
+    if (index < arrayAPI.length - 1) {
+      this.setState({
+        index: index + 1,
+        greenButton: { border: '' },
+        redButton: { border: '' },
+        buttonClickNext: false,
+      }, () => this.randonQuestions());
+    }
+  };
+
   render() {
     const { name } = this.props;
-    const { arrayAPI, loading, index, answers } = this.state;
+    const { arrayAPI, loading, index, answers, buttonClickNext, redButton,
+      greenButton } = this.state;
     return (
       <>
         <header>
@@ -73,17 +97,44 @@ class GamePage extends React.Component {
                 { answers.map((answer, i) => (
                   (answer !== arrayAPI[index].correct_answer)
                     ? (
-                      <button key={ i } type="button" data-testid={ `wrong-answer-${i}` }>
+                      <button
+                        key={ i }
+                        type="button"
+                        style={ redButton }
+                        onClick={ this.buttonClick }
+                        data-testid={ `wrong-answer-${i}` }
+                      >
                         { answer }
                       </button>
                     )
                     : (
-                      <button key="correct" type="button" data-testid="correct-answer">
+                      <button
+                        key="correct"
+                        type="button"
+                        style={ greenButton }
+                        onClick={ this.buttonClick }
+                        data-testid="correct-answer"
+                      >
                         { answer }
                       </button>
                     )
                 ))}
               </span>
+              { buttonClickNext
+                ? (
+                  <div>
+                    <button
+                      type="button"
+                      data-testid="btn-next"
+                      onClick={ this.buttonNext }
+                    >
+                      Next
+                    </button>
+                  </div>
+                )
+                : (
+                  <p> </p>
+                )}
             </section>
           )}
       </>
