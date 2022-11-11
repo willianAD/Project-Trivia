@@ -34,7 +34,7 @@ class Login extends React.Component {
     const { email, name } = this.state;
     const myToken = await fetchAPItoken();
     localStorage.setItem('token', (myToken.token));
-    dispatch(tokenAPI(myToken.token));
+    dispatch(tokenAPI(myToken));
     dispatch(userLogin({ email, name }));
     history.push('/gamepage');
   };

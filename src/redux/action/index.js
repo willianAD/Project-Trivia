@@ -12,3 +12,5 @@ export const tokenAPI = (payload) => ({
 });
 
 export const fetchAPItoken = () => fetch('https://opentdb.com/api_token.php?command=request').then((response) => response.json());
+
+export const fetchAPIquestion = (param) => fetch(`https://opentdb.com/api.php?amount=5&token=${param}`).then((response) => response.json());
