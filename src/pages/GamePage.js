@@ -17,7 +17,6 @@ class GamePage extends React.Component {
 
   componentDidMount() {
     this.reciveAPI();
-    this.randonQuestions();
   }
 
   getGravatar = () => {
@@ -37,15 +36,15 @@ class GamePage extends React.Component {
     this.setState({
       arrayAPI: questionAPI.results,
       loading: true,
-    });
+    }, () => this.randonQuestions());
   };
 
   randonQuestions = () => {
-    const { arrayAPI } = this.state;
+    const { arrayAPI, index } = this.state;
     const randomNumber = 0.5;
     if (arrayAPI.length > 0) {
-      const answer = arrayAPI.map((api) => api.incorrect_answers);
-      // [api.incorrect_answers, api.correct_answer]
+      const answer = [arrayAPI[index].correct_answer,
+        ...arrayAPI[index].incorrect_answers];
       const randomAnswer = answer.sort(() => Math.random() - randomNumber);
       this.setState({
         answers: randomAnswer,
@@ -56,7 +55,6 @@ class GamePage extends React.Component {
   render() {
     const { name } = this.props;
     const { arrayAPI, loading, index, answers } = this.state;
-    console.log(answers);
     return (
       <>
         <header>
@@ -69,22 +67,23 @@ class GamePage extends React.Component {
           ? <p>LOADING...</p>
           : (
             <section>
-              <p data-testid="question-category">{ arrayAPI[0].category }</p>
-              <p data-testid="question-text">{ arrayAPI[0].question }</p>
-              <div data-testid="answer-options">
-                <button type="button" data-testid={ `wrong-answer-${0}` }>
-                  { arrayAPI[index].incorrect_answers[0] }
-                </button>
-                <button type="button" data-testid={ `wrong-answer-${1}` }>
-                  { arrayAPI[index].incorrect_answers[1] }
-                </button>
-                <button type="button" data-testid={ `wrong-answer-${2}` }>
-                  { arrayAPI[index].incorrect_answers[2] }
-                </button>
-                <button type="button" data-testid="correct-answer">
-                  { arrayAPI[index].correct_answer }
-                </button>
-              </div>
+              <p data-testid="question-category">{ arrayAPI[index].category }</p>
+              <p data-testid="question-text">{ arrayAPI[index].question }</p>
+              <span data-testid="answer-options">
+                { answers.map((answer, i) => (
+                  (answer !== arrayAPI[index].correct_answer)
+                    ? (
+                      <button key={ i } type="button" data-testid={ `wrong-answer-${i}` }>
+                        { answer }
+                      </button>
+                    )
+                    : (
+                      <button key="correct" type="button" data-testid="correct-answer">
+                        { answer }
+                      </button>
+                    )
+                ))}
+              </span>
             </section>
           )}
       </>
