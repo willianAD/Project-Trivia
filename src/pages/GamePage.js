@@ -29,6 +29,7 @@ class GamePage extends React.Component {
     if (prevState.timer === 1) {
       this.setState({
         buttonDisabled: true,
+        buttonClickNext: true,
       });
       clearInterval(this.id);
     }
@@ -96,7 +97,10 @@ class GamePage extends React.Component {
         greenButton: { border: '' },
         redButton: { border: '' },
         buttonClickNext: false,
+        buttonDisabled: false,
+        timer: 30,
       }, () => this.randonQuestions());
+      this.handleTimer();
     }
     if (index === feedbackNumber) {
       history.push('/feedback');
