@@ -12,6 +12,8 @@ class GamePage extends React.Component {
       loading: false,
       index: 0,
       answers: [],
+      timer: 30,
+      buttonDisabled: false,
       greenButton: { border: '' },
       redButton: { border: '' },
       buttonClickNext: false,
@@ -20,6 +22,16 @@ class GamePage extends React.Component {
 
   componentDidMount() {
     this.reciveAPI();
+    this.handleTimer();
+  }
+
+  componentDidUpdate(_prevProps, prevState) {
+    if (prevState.timer === 1) {
+      this.setState({
+        buttonDisabled: true,
+      });
+      clearInterval(this.id);
+    }
   }
 
   getGravatar = () => {
@@ -55,6 +67,17 @@ class GamePage extends React.Component {
     }
   };
 
+  handleTimer = () => {
+    const interval = 1000;
+    this.id = setInterval(() => {
+      this.setState(
+        (prevState) => ({
+          timer: prevState.timer - 1,
+        }),
+      );
+    }, interval);
+  };
+
   buttonClick = () => {
     this.setState({
       greenButton: { border: '3px solid rgb(6, 240, 15)' },
@@ -64,7 +87,9 @@ class GamePage extends React.Component {
   };
 
   buttonNext = () => {
+    const { history } = this.props;
     const { index, arrayAPI } = this.state;
+    const feedbackNumber = 4;
     if (index < arrayAPI.length - 1) {
       this.setState({
         index: index + 1,
@@ -73,12 +98,15 @@ class GamePage extends React.Component {
         buttonClickNext: false,
       }, () => this.randonQuestions());
     }
+    if (index === feedbackNumber) {
+      history.push('/feedback');
+    }
   };
 
   render() {
     const { name } = this.props;
     const { arrayAPI, loading, index, answers, buttonClickNext, redButton,
-      greenButton } = this.state;
+      greenButton, timer, buttonDisabled } = this.state;
     return (
       <>
         <header>
@@ -103,6 +131,7 @@ class GamePage extends React.Component {
                         style={ redButton }
                         onClick={ this.buttonClick }
                         data-testid={ `wrong-answer-${i}` }
+                        disabled={ buttonDisabled }
                       >
                         { answer }
                       </button>
@@ -114,6 +143,7 @@ class GamePage extends React.Component {
                         style={ greenButton }
                         onClick={ this.buttonClick }
                         data-testid="correct-answer"
+                        disabled={ buttonDisabled }
                       >
                         { answer }
                       </button>
@@ -135,6 +165,12 @@ class GamePage extends React.Component {
                 : (
                   <p> </p>
                 )}
+              <div>
+                <h6>Tempo</h6>
+                <h4>
+                  { timer }
+                </h4>
+              </div>
             </section>
           )}
       </>
