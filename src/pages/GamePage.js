@@ -17,6 +17,8 @@ class GamePage extends React.Component {
       greenButton: { border: '' },
       redButton: { border: '' },
       buttonClickNext: false,
+      score: 0,
+      answerNivel: '',
     };
   }
 
@@ -64,6 +66,7 @@ class GamePage extends React.Component {
       const randomAnswer = answer.sort(() => Math.random() - randomNumber);
       this.setState({
         answers: randomAnswer,
+        answerNivel: arrayAPI[index].difficulty,
       });
     }
   };
@@ -79,12 +82,53 @@ class GamePage extends React.Component {
     }, interval);
   };
 
-  buttonClick = () => {
-    this.setState({
-      greenButton: { border: '3px solid rgb(6, 240, 15)' },
-      redButton: { border: '3px solid red' },
-      buttonClickNext: true,
-    });
+  buttonClick = ({ target }) => {
+    const { answerNivel, timer, score } = this.state;
+    const scoreNumber = 10;
+    const hardNumber = 3;
+    const correct = 'correct-answer';
+    const green = '3px solid rgb(6, 240, 15)';
+    const red = '3px solid red';
+    const id = 'data-testid';
+    if (target.getAttribute(id) === correct && answerNivel === 'easy') {
+      this.setState({
+        greenButton: { border: green },
+        redButton: { border: red },
+        buttonClickNext: true,
+        score: score + scoreNumber + timer * 1,
+      });
+      clearInterval(this.id);
+    } else if (target.getAttribute(id) === correct && answerNivel === 'medium') {
+      this.setState({
+        greenButton: { border: green },
+        redButton: { border: red },
+        buttonClickNext: true,
+        score: score + scoreNumber + timer * 2,
+      });
+      clearInterval(this.id);
+    } else if (target.getAttribute(id) === correct && answerNivel === 'hard') {
+      this.setState({
+        greenButton: { border: green },
+        redButton: { border: red },
+        buttonClickNext: true,
+        score: score + scoreNumber + timer * hardNumber,
+      });
+      clearInterval(this.id);
+    } else if (timer === 0) {
+      console.log('if timer');
+      this.setState({ greenButton: { border: green },
+        redButton: { border: red },
+        buttonClickNext: true,
+        score,
+      });
+      clearInterval(this.id);
+    } else {
+      console.log('else');
+      this.setState({ greenButton: { border: green },
+        redButton: { border: red },
+        buttonClickNext: true });
+      clearInterval(this.id);
+    }
   };
 
   buttonNext = () => {
@@ -99,8 +143,8 @@ class GamePage extends React.Component {
         buttonClickNext: false,
         buttonDisabled: false,
         timer: 30,
-      }, () => this.randonQuestions());
-      this.handleTimer();
+        answerNivel: arrayAPI[index].difficulty,
+      }, () => this.randonQuestions(), this.handleTimer());
     }
     if (index === feedbackNumber) {
       history.push('/feedback');
@@ -110,14 +154,14 @@ class GamePage extends React.Component {
   render() {
     const { name } = this.props;
     const { arrayAPI, loading, index, answers, buttonClickNext, redButton,
-      greenButton, timer, buttonDisabled } = this.state;
+      greenButton, timer, buttonDisabled, score } = this.state;
     return (
       <>
         <header>
           <img src={ `https://www.gravatar.com/avatar/${this.getGravatar()}` } alt="Imagem de perfil" data-testid="header-profile-picture" />
           <p data-testid="header-player-name">{ name }</p>
           <span>Score: </span>
-          <span data-testid="header-score">0</span>
+          <span data-testid="header-score">{ score }</span>
         </header>
         { !loading
           ? <p>LOADING...</p>
