@@ -71,6 +71,7 @@ class Feedback extends React.Component {
     //    </div>
     //  );
     // }
+
     return (
 
       <>
@@ -78,6 +79,10 @@ class Feedback extends React.Component {
           <h1 data-testid="feedback-text">feedback</h1>
           { score >= tres ? <h1 data-testid="feedback-text">Well Done!</h1>
             : <h1 data-testid="feedback-text">Could be better...</h1> }
+          <span>
+            <h1 data-testid="feedback-text">Could be better...</h1>
+            { score > 1 ? score < tres : 'Could be better...' }
+          </span>
           <img
             src={ picture }
             alt="Imagem de perfil"
