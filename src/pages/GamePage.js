@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
-import { fetchAPIquestion } from '../redux/action';
+import { fetchAPIquestion, changePoints } from '../redux/action';
 
 class GamePage extends React.Component {
   constructor() {
@@ -17,20 +17,26 @@ class GamePage extends React.Component {
       greenButton: { border: '' },
       redButton: { border: '' },
       buttonClickNext: false,
+      score: 0,
+      questionLevel: '',
+      name: '',
+      email: '',
+      assertions: 0,
     };
   }
 
   componentDidMount() {
     this.reciveAPI();
     this.handleTimer();
+    const playerName = localStorage.getItem('name');
+    const playerEmail = localStorage.getItem('email');
+    this.setState({ name: playerName, email: playerEmail });
   }
 
   componentDidUpdate(_prevProps, prevState) {
     if (prevState.timer === 1) {
-      this.setState({
-        buttonDisabled: true,
-      });
-      clearInterval(this.id);
+      this.setState({ buttonDisabled: true, buttonClickNext: true,
+      }, () => clearInterval(this.id));
     }
   }
 
@@ -63,6 +69,7 @@ class GamePage extends React.Component {
       const randomAnswer = answer.sort(() => Math.random() - randomNumber);
       this.setState({
         answers: randomAnswer,
+        questionLevel: arrayAPI[index].difficulty,
       });
     }
   };
@@ -78,12 +85,56 @@ class GamePage extends React.Component {
     }, interval);
   };
 
-  buttonClick = () => {
-    this.setState({
-      greenButton: { border: '3px solid rgb(6, 240, 15)' },
-      redButton: { border: '3px solid red' },
-      buttonClickNext: true,
-    });
+  buttonClick = async (event) => {
+    const { dispatch } = this.props;
+    const { timer, questionLevel } = this.state;
+    const points = 10;
+    const hard = 3;
+    const testId = event.target.getAttribute('data-testid');
+    const correctAnswer = 'correct-answer';
+    const greenBorder = '3px solid rgb(6, 240, 15)';
+    const redBorder = '3px solid red';
+    if (testId === correctAnswer && questionLevel === 'easy') {
+      this.setState((prevState) => ({
+        greenButton: { border: greenBorder },
+        redButton: { border: redBorder },
+        buttonClickNext: true,
+        score: prevState.score + points + timer * 1,
+        assertions: prevState.assertions + 1,
+      }), () => {
+        const { name, score, email, assertions } = this.state;
+        dispatch(changePoints({ score, name, email, assertions }));
+      });
+    } else if (testId === correctAnswer && questionLevel === 'medium') {
+      this.setState((prevState) => ({
+        greenButton: { border: greenBorder },
+        redButton: { border: redBorder },
+        buttonClickNext: true,
+        score: prevState.score + points + timer * 2,
+        assertions: prevState.assertions + 1,
+      }), () => {
+        const { name, score, email, assertions } = this.state;
+        dispatch(changePoints({ score, name, email, assertions }));
+      });
+    } else if (testId === correctAnswer && questionLevel === 'hard') {
+      this.setState((prevState) => ({
+        greenButton: { border: greenBorder },
+        redButton: { border: redBorder },
+        buttonClickNext: true,
+        score: prevState.score + points + timer * hard,
+        assertions: prevState.assertions + 1,
+      }), () => {
+        const { name, score, email, assertions } = this.state;
+        dispatch(changePoints({ score, name, email, assertions }));
+      });
+    } else {
+      this.setState(() => ({
+        greenButton: { border: '3px solid rgb(6, 240, 15)' },
+        redButton: { border: '3px solid red' },
+        buttonClickNext: true,
+      }));
+    }
+    clearInterval(this.id);
   };
 
   buttonNext = () => {
@@ -96,7 +147,10 @@ class GamePage extends React.Component {
         greenButton: { border: '' },
         redButton: { border: '' },
         buttonClickNext: false,
-      }, () => this.randonQuestions());
+        timer: 30,
+        buttonDisabled: false,
+        questionLevel: arrayAPI[index].difficulty,
+      }, () => this.randonQuestions(), this.handleTimer());
     }
     if (index === feedbackNumber) {
       history.push('/feedback');
@@ -106,14 +160,16 @@ class GamePage extends React.Component {
   render() {
     const { name } = this.props;
     const { arrayAPI, loading, index, answers, buttonClickNext, redButton,
-      greenButton, timer, buttonDisabled } = this.state;
+      greenButton, timer, buttonDisabled, score } = this.state;
     return (
       <>
         <header>
           <img src={ `https://www.gravatar.com/avatar/${this.getGravatar()}` } alt="Imagem de perfil" data-testid="header-profile-picture" />
           <p data-testid="header-player-name">{ name }</p>
           <span>Score: </span>
-          <span data-testid="header-score">0</span>
+          <span data-testid="header-score">
+            {score}
+          </span>
         </header>
         { !loading
           ? <p>LOADING...</p>
@@ -132,6 +188,7 @@ class GamePage extends React.Component {
                         onClick={ this.buttonClick }
                         data-testid={ `wrong-answer-${i}` }
                         disabled={ buttonDisabled }
+                        nivel={ arrayAPI[index].difficulty }
                       >
                         { answer }
                       </button>
@@ -144,6 +201,7 @@ class GamePage extends React.Component {
                         onClick={ this.buttonClick }
                         data-testid="correct-answer"
                         disabled={ buttonDisabled }
+                        nivel={ arrayAPI[index].difficulty }
                       >
                         { answer }
                       </button>
@@ -177,18 +235,16 @@ class GamePage extends React.Component {
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   email: state.login.email,
   name: state.login.name,
 });
-
 GamePage.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
 };
-
 export default connect(mapStateToProps)(GamePage);

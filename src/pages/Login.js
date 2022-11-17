@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { userLogin, fetchAPItoken, tokenAPI } from '../redux/action';
+import { userLogin, fetchAPItoken, tokenAPI, changePoints } from '../redux/action';
 
 class Login extends React.Component {
   constructor() {
@@ -11,6 +11,8 @@ class Login extends React.Component {
       email: '',
       name: '',
       buttonDisable: true,
+      score: 0,
+      assertion: 0,
     };
   }
 
@@ -31,11 +33,14 @@ class Login extends React.Component {
 
   buttonClick = async () => {
     const { history, dispatch } = this.props;
-    const { email, name } = this.state;
+    const { email, name, score, assertion } = this.state;
     const myToken = await fetchAPItoken();
     localStorage.setItem('token', (myToken.token));
+    localStorage.setItem('name', (name));
+    localStorage.setItem('email', (email));
     dispatch(tokenAPI(myToken));
     dispatch(userLogin({ email, name }));
+    dispatch(changePoints({ email, name, score, assertion }));
     history.push('/gamepage');
   };
 
