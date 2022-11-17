@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -9,17 +10,17 @@ class Ranking extends Component {
     };
   }
 
-  componentDidMount() {
-    const save = localStorage.getItem('ranking');
-    const json = JSON.parse(save);
-    const order = save.sort((a, b) => b.score - a.score);
-    this.setState({ json: save });
-  }
+  // componentDidMount() {
+  //   const save = localStorage.getItem('ranking');
+  //   const json = JSON.parse(save);
+  //   const order = save.sort((a, b) => b.score - a.score);
+  //   this.setState({ json: save });
+  // }
 
-  // handleButton = () => {
-  //   const { history } = this.props;
-  //   history.push('/');
-  // };
+  handleButton = () => {
+    const { history } = this.props;
+    history.push('/');
+  };
 
   render() {
     const { ranking } = this.state;
@@ -31,7 +32,7 @@ class Ranking extends Component {
             <button
               type="button"
               data-testid="btn-go-home"
-              // onClick={ () => this.handleButton() }
+              onClick={ () => this.handleButton() }
             >
               Voltar ao Início
             </button>
@@ -63,5 +64,11 @@ class Ranking extends Component {
     );
   }
 }
+
+Ranking.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+};
 
 export default Ranking;
