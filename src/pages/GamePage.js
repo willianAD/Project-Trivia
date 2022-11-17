@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
-import { fetchAPIquestion } from '../redux/action';
+import { fetchAPIquestion, fetchGravatar, changePoints } from '../redux/action';
 
 class GamePage extends React.Component {
   constructor() {
@@ -18,28 +18,36 @@ class GamePage extends React.Component {
       redButton: { border: '' },
       buttonClickNext: false,
       score: 0,
-      answerNivel: '',
+      questionLevel: '',
+      name: '',
+      email: '',
+      assertions: 0,
     };
   }
 
   componentDidMount() {
     this.reciveAPI();
     this.handleTimer();
+    const playerName = localStorage.getItem('name');
+    const playerEmail = localStorage.getItem('email');
+    this.setState({ name: playerName, email: playerEmail });
   }
 
   componentDidUpdate(_prevProps, prevState) {
     if (prevState.timer === 1) {
-      this.setState({
-        buttonDisabled: true,
-        buttonClickNext: true,
-      });
-      clearInterval(this.id);
+      this.setState({ buttonDisabled: true, buttonClickNext: true,
+      }, () => clearInterval(this.id));
     }
   }
 
   getGravatar = () => {
-    const { email } = this.props;
-    return md5(email).toString();
+    const { email, dispatch } = this.props;
+    const { score } = this.state;
+    const emailMd5 = md5(email).toString();
+    localStorage.setItem('picture', (`https://www.gravatar.com/avatar/${emailMd5}`));
+    localStorage.setItem('score', (+score));
+    dispatch(fetchGravatar(emailMd5));
+    return emailMd5;
   };
 
   reciveAPI = async () => {
@@ -51,9 +59,7 @@ class GamePage extends React.Component {
       localStorage.removeItem('token');
       history.push('/');
     }
-    this.setState({
-      arrayAPI: questionAPI.results,
-      loading: true,
+    this.setState({ arrayAPI: questionAPI.results, loading: true,
     }, () => this.randonQuestions());
   };
 
@@ -64,76 +70,72 @@ class GamePage extends React.Component {
       const answer = [arrayAPI[index].correct_answer,
         ...arrayAPI[index].incorrect_answers];
       const randomAnswer = answer.sort(() => Math.random() - randomNumber);
-      this.setState({
-        answers: randomAnswer,
-        answerNivel: arrayAPI[index].difficulty,
-      });
+      this.setState({ answers: randomAnswer, questionLevel: arrayAPI[index].difficulty });
     }
   };
 
   handleTimer = () => {
     const interval = 1000;
     this.id = setInterval(() => {
-      this.setState(
-        (prevState) => ({
-          timer: prevState.timer - 1,
-        }),
-      );
+      this.setState((prevState) => ({ timer: prevState.timer - 1 }));
     }, interval);
   };
 
-  buttonClick = ({ target }) => {
-    const { answerNivel, timer, score } = this.state;
-    const scoreNumber = 10;
-    const hardNumber = 3;
-    const correct = 'correct-answer';
-    const green = '3px solid rgb(6, 240, 15)';
-    const red = '3px solid red';
-    const id = 'data-testid';
-    if (target.getAttribute(id) === correct && answerNivel === 'easy') {
-      this.setState({
-        greenButton: { border: green },
-        redButton: { border: red },
+  buttonClick = async (event) => {
+    const { dispatch } = this.props;
+    const { timer, questionLevel } = this.state;
+    const points = 10;
+    const hard = 3;
+    const testId = event.target.getAttribute('data-testid');
+    const correctAnswer = 'correct-answer';
+    const greenBorder = '3px solid rgb(6, 240, 15)';
+    const redBorder = '3px solid red';
+    if (testId === correctAnswer && questionLevel === 'easy') {
+      this.setState((prevState) => ({
+        greenButton: { border: greenBorder },
+        redButton: { border: redBorder },
         buttonClickNext: true,
-        score: score + scoreNumber + timer * 1,
+        score: prevState.score + points + timer * 1,
+        assertions: prevState.assertions + 1,
+      }), () => {
+        const { name, score, email, assertions } = this.state;
+        dispatch(changePoints({ score, name, email, assertions }));
       });
-      clearInterval(this.id);
-    } else if (target.getAttribute(id) === correct && answerNivel === 'medium') {
-      this.setState({
-        greenButton: { border: green },
-        redButton: { border: red },
+    } else if (testId === correctAnswer && questionLevel === 'medium') {
+      this.setState((prevState) => ({
+        greenButton: { border: greenBorder },
+        redButton: { border: redBorder },
         buttonClickNext: true,
-        score: score + scoreNumber + timer * 2,
+        score: prevState.score + points + timer * 2,
+        assertions: prevState.assertions + 1,
+      }), () => {
+        const { name, score, email, assertions } = this.state;
+        dispatch(changePoints({ score, name, email, assertions }));
       });
-      clearInterval(this.id);
-    } else if (target.getAttribute(id) === correct && answerNivel === 'hard') {
-      this.setState({
-        greenButton: { border: green },
-        redButton: { border: red },
+    } else if (testId === correctAnswer && questionLevel === 'hard') {
+      this.setState((prevState) => ({
+        greenButton: { border: greenBorder },
+        redButton: { border: redBorder },
         buttonClickNext: true,
-        score: score + scoreNumber + timer * hardNumber,
+        score: prevState.score + points + timer * hard,
+        assertions: prevState.assertions + 1,
+      }), () => {
+        const { name, score, email, assertions } = this.state;
+        dispatch(changePoints({ score, name, email, assertions }));
       });
-      clearInterval(this.id);
-    } else if (timer === 0) {
-      console.log('if timer');
-      this.setState({ greenButton: { border: green },
-        redButton: { border: red },
-        buttonClickNext: true,
-        score,
-      });
-      clearInterval(this.id);
     } else {
-      console.log('else');
-      this.setState({ greenButton: { border: green },
-        redButton: { border: red },
-        buttonClickNext: true });
-      clearInterval(this.id);
+      this.setState(() => ({
+        greenButton: { border: '3px solid rgb(6, 240, 15)' },
+        redButton: { border: '3px solid red' },
+        buttonClickNext: true,
+      }));
     }
+    clearInterval(this.id);
   };
 
   buttonNext = () => {
     const { history } = this.props;
-    const { index, arrayAPI } = this.state;
+    const { index, arrayAPI, assertions } = this.state;
     const feedbackNumber = 4;
     if (index < arrayAPI.length - 1) {
       this.setState({
@@ -141,12 +143,13 @@ class GamePage extends React.Component {
         greenButton: { border: '' },
         redButton: { border: '' },
         buttonClickNext: false,
-        buttonDisabled: false,
         timer: 30,
-        answerNivel: arrayAPI[index].difficulty,
+        buttonDisabled: false,
+        questionLevel: arrayAPI[index].difficulty,
       }, () => this.randonQuestions(), this.handleTimer());
     }
     if (index === feedbackNumber) {
+      localStorage.setItem('assertions', (assertions));
       history.push('/feedback');
     }
   };
@@ -180,6 +183,7 @@ class GamePage extends React.Component {
                         onClick={ this.buttonClick }
                         data-testid={ `wrong-answer-${i}` }
                         disabled={ buttonDisabled }
+                        nivel={ arrayAPI[index].difficulty }
                       >
                         { answer }
                       </button>
@@ -192,6 +196,7 @@ class GamePage extends React.Component {
                         onClick={ this.buttonClick }
                         data-testid="correct-answer"
                         disabled={ buttonDisabled }
+                        nivel={ arrayAPI[index].difficulty }
                       >
                         { answer }
                       </button>
@@ -225,13 +230,13 @@ class GamePage extends React.Component {
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   email: state.login.email,
   name: state.login.name,
 });
 
 GamePage.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   history: PropTypes.shape({
