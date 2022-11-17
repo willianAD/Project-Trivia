@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
-import { fetchAPIquestion } from '../redux/action';
+import { fetchAPIquestion, fetchGravatar } from '../redux/action';
 
 class GamePage extends React.Component {
   constructor() {
@@ -17,6 +17,7 @@ class GamePage extends React.Component {
       greenButton: { border: '' },
       redButton: { border: '' },
       buttonClickNext: false,
+      score: 0,
     };
   }
 
@@ -36,8 +37,14 @@ class GamePage extends React.Component {
   }
 
   getGravatar = () => {
-    const { email } = this.props;
-    return md5(email).toString();
+    const { email, dispatch, name } = this.props;
+    const { score } = this.state;
+    const emailMd5 = md5(email).toString();
+    localStorage.setItem('name', (name));
+    localStorage.setItem('picture', (`https://www.gravatar.com/avatar/${emailMd5}`));
+    localStorage.setItem('score', (score));
+    dispatch(fetchGravatar(emailMd5));
+    return emailMd5;
   };
 
   reciveAPI = async () => {
@@ -190,6 +197,7 @@ const mapStateToProps = (state) => ({
 GamePage.propTypes = {
   email: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
