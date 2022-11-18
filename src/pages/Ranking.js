@@ -1,21 +1,24 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 class Ranking extends Component {
   constructor() {
     super();
     this.state = {
       ranking: [],
+      scoreOrder: [],
     };
   }
 
-  // componentDidMount() {
-  //   const save = localStorage.getItem('ranking');
-  //   const json = JSON.parse(save);
-  //   const order = save.sort((a, b) => b.score - a.score);
-  //   this.setState({ json: save });
-  // }
+  componentDidMount() {
+    const ranking = JSON.parse(localStorage.getItem('ranking'));
+    const score = ranking.map((player) => player.score);
+    const scoreOrder = score.sort((a, b) => a - b);
+    this.setState({
+      ranking,
+      scoreOrder,
+    });
+  }
 
   handleButton = () => {
     const { history } = this.props;
@@ -23,44 +26,37 @@ class Ranking extends Component {
   };
 
   render() {
-    const { ranking } = this.state;
+    const { ranking, scoreOrder } = this.state;
+    console.log(ranking);
+    console.log(scoreOrder);
     return (
-      <div>
-        <section>
-          <h1 data-testid="ranking-title">Ranking</h1>
-          <Link to="/">
-            <button
-              type="button"
-              data-testid="btn-go-home"
-              onClick={ () => this.handleButton() }
-            >
-              Voltar ao Início
-            </button>
-          </Link>
-          <ol>
-            {
-              ranking.map((player, index) => (
-                <li key={ index }>
-                  <p
-                    data-testid={ `player-name-$
-                {index}` }
-                  >
-                    { player.name }
-
-                  </p>
-                  <p
-                    data-testid={ `player-score-$
-            {index}` }
-                  >
-                    { player.score }
-                  </p>
-                  <img src={ player.picture } alt={ player.picture } />
-                </li>
-              ))
-            }
-          </ol>
-        </section>
-      </div>
+      <>
+        <h1 data-testid="ranking-title">Ranking</h1>
+        { ranking.map((player, index) => (
+          (player.score === scoreOrder[index])
+            ? (
+              <div key={ index }>
+                <img src={ player.picture } alt="Gravatar" />
+                <p data-testid={ `player-name-${index}` }>{ player.name }</p>
+                <p data-testid={ `player-score-${index}` }>{ player.score }</p>
+              </div>
+            )
+            : (
+              <div key={ index }>
+                <img src={ player.picture } alt="Gravatar" />
+                <p data-testid={ `player-name-${index}` }>{ player.name }</p>
+                <p data-testid={ `player-score-${index}` }>{ player.score }</p>
+              </div>
+            )
+        ))}
+        <button
+          type="button"
+          data-testid="btn-go-home"
+          onClick={ () => this.handleButton() }
+        >
+          Voltar ao Início
+        </button>
+      </>
     );
   }
 }

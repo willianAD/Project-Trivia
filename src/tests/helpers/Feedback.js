@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-// import { act } from 'react-dom/test-utils';
-import { renderWithRouterAndRedux } from './helpers/renderWithRouterAndRedux';
-import App from '../App';
-import { fetchGravatar } from '../redux/action';
+import { act } from 'react-dom/test-utils';
+import { renderWithRouterAndRedux } from './renderWithRouterAndRedux';
+import App from '../../App';
+import { fetchGravatar } from '../../redux/action';
 
 describe('', () => {
   it('', () => {
@@ -16,11 +16,10 @@ describe('', () => {
       json: jest.fn().mockResolvedValue(getGravatar),
     });
     const { history } = renderWithRouterAndRedux(<App />);
-    
-          const url = '/feedback';
-        act(() => {
-          history.push(url);
-        });
+    const url = '/feedback';
+    act(() => {
+      history.push(url);
+    });
     const imagem = screen.getByTestId('header-profile-picture');
     const name = screen.getByTestId('header-player-name');
     const placar = screen.getByTestId('header-score');
@@ -29,7 +28,6 @@ describe('', () => {
     userEvent.type(placar, { name: /score/i });
     // userEvent.type(name, ('lilibertola'));
     // userEvent.type(image, { h1: /gavatar/i });
-//h1 que faz se consta no HEADER? esqueci!
     const button = screen.getByRole('button', { name: /entrar/i });
     userEvent.click(button);
     // const buttonPlayAgain = screen.getByRole('button');

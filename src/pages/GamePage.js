@@ -81,12 +81,12 @@ class GamePage extends React.Component {
     }, interval);
   };
 
-  buttonClick = async (event) => {
+  buttonClick = ({ target }) => {
     const { dispatch } = this.props;
     const { timer, questionLevel } = this.state;
     const points = 10;
     const hard = 3;
-    const testId = event.target.getAttribute('data-testid');
+    const testId = target.getAttribute('data-testid');
     const correctAnswer = 'correct-answer';
     const greenBorder = '3px solid rgb(6, 240, 15)';
     const redBorder = '3px solid red';
@@ -128,7 +128,8 @@ class GamePage extends React.Component {
         greenButton: { border: '3px solid rgb(6, 240, 15)' },
         redButton: { border: '3px solid red' },
         buttonClickNext: true,
-      }));
+      })); const { name, score, email, assertions } = this.state;
+      dispatch(changePoints({ score, name, email, assertions }));
     }
     clearInterval(this.id);
   };

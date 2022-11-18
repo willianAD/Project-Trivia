@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 class Feedback extends React.Component {
@@ -11,27 +10,35 @@ class Feedback extends React.Component {
       picture: '',
       score: 0,
       assertions: 0,
-      // loading: true,
+      ranking: [],
     };
   }
 
   componentDidMount() {
-    const getName = localStorage.getItem('name');
-    const getPicture = localStorage.getItem('picture');
-    const getScore = localStorage.getItem('score');
-    const getAssertions = localStorage.getItem('assertions');
-    this.setState({
-      name: getName,
-      picture: getPicture,
-      score: getScore,
-      assertions: +getAssertions,
-    });
-    // if (typeof assertions !== 'NaN') {
-    //   this.setState({
-    //     loading: false,
-    //   });
-    // }
+    const name = localStorage.getItem('name');
+    const picture = localStorage.getItem('picture');
+    const score = +localStorage.getItem('score');
+    const assertions = +localStorage.getItem('assertions');
+    this.setState((prevState) => ({
+      name,
+      picture,
+      score,
+      assertions,
+      ranking: [...prevState.ranking, { picture, name, score }],
+    }));
   }
+
+  buttonRanking = () => {
+    const { history } = this.props;
+    const { ranking } = this.state;
+    if (localStorage.ranking === undefined) {
+      localStorage.setItem('ranking', JSON.stringify(ranking));
+    } else {
+      const storage = JSON.parse(localStorage.getItem('ranking'));
+      localStorage.setItem('ranking', JSON.stringify([...storage, ranking[0]]));
+    }
+    history.push('/ranking');
+  };
 
   buttonPlayAgain = () => {
     const { history } = this.props;
@@ -40,18 +47,12 @@ class Feedback extends React.Component {
 
   render() {
     const tres = 3;
-    // const { assertions } = this.props;
     const { name, picture, score, assertions } = this.state;
-    console.log(typeof assertions);
     return (
       <>
         <header>
           { assertions >= tres ? <h1 data-testid="feedback-text">Well Done!</h1>
             : <h1 data-testid="feedback-text">Could be better...</h1> }
-          <span>
-            <h1 data-testid="feedback-text">Could be better...</h1>
-            { score > 1 ? score < tres : 'Could be better...' }
-          </span>
           <img
             src={ picture }
             alt="Imagem de perfil"
@@ -66,14 +67,13 @@ class Feedback extends React.Component {
           <div data-testid="feedback-total-score">{ score }</div>
           <div data-testid="feedback-total-question">{ assertions }</div>
         </section>
-        <Link to="/ranking">
-          <button
-            type="button"
-            data-testid="btn-ranking"
-          >
-            Ranking
-          </button>
-        </Link>
+        <button
+          type="button"
+          data-testid="btn-ranking"
+          onClick={ this.buttonRanking }
+        >
+          Ranking
+        </button>
         <button
           type="button"
           data-testid="btn-play-again"
@@ -88,14 +88,12 @@ class Feedback extends React.Component {
 
 const mapStateToProps = (state) => ({
   gravatar: state.gravatarIMG,
-  // assertions: state.player.assertions,
 });
 
 Feedback.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
-  // assertions: PropTypes.number.isRequired,
 };
 
 export default connect(mapStateToProps)(Feedback);
