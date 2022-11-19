@@ -6,11 +6,13 @@ class Ranking extends Component {
     super();
     this.state = {
       ranking: [],
+      // scoreOrder: [],
     };
   }
 
   componentDidMount() {
     const ranking = JSON.parse(localStorage.getItem('ranking'));
+    // const score = ranking.map((player) => player.score);
     const scoreOrder = ranking.sort((a, b) => b.score - a.score);
     this.setState({
       ranking: scoreOrder,
@@ -24,6 +26,8 @@ class Ranking extends Component {
 
   render() {
     const { ranking } = this.state;
+    // console.log(ranking);
+    // console.log(scoreOrder);
     return (
       <>
         <h1 data-testid="ranking-title">Ranking</h1>
