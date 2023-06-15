@@ -27,11 +27,11 @@ Cada acerto dá pontos que deverão ser computados num placar, no header da apli
 
 ## Como usar
 
-1. Clone este repositório:
-
 Poderá ser acessado através deste link [clique aqui](https://willianad.github.io/Project-Trivia/).
 
 ou
+
+1. Clone este repositório:
 
 HTTPS:
 
