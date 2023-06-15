@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import '../styles/feedback.css';
+import star from '../images/star-icon.png';
 
 class Feedback extends React.Component {
   constructor() {
@@ -50,37 +52,40 @@ class Feedback extends React.Component {
     const { name, picture, score, assertions } = this.state;
     return (
       <>
-        <header>
-          { assertions >= tres ? <h1 data-testid="feedback-text">Well Done!</h1>
-            : <h1 data-testid="feedback-text">Could be better...</h1> }
-          <img
-            src={ picture }
-            alt="Imagem de perfil"
-            data-testid="header-profile-picture"
-          />
-          <p data-testid="header-player-name">{ name }</p>
-          <span>Score: </span>
-          <span data-testid="header-score">{ score }</span>
-        </header>
-        <section>
-          <h2>PLACAR FINAL</h2>
-          <div data-testid="feedback-total-score">{ score }</div>
-          <div data-testid="feedback-total-question">{ assertions }</div>
-        </section>
-        <button
-          type="button"
-          data-testid="btn-ranking"
-          onClick={ this.buttonRanking }
-        >
-          Ranking
-        </button>
-        <button
-          type="button"
-          data-testid="btn-play-again"
-          onClick={ this.buttonPlayAgain }
-        >
-          Play Again
-        </button>
+        <div className="div-header-feedback">
+          <img src={ picture } alt="Imagem de perfil" className="img-gravatar-feedback" />
+          <p className="header-player-name">{ name }</p>
+          { assertions >= tres ? <h3 className="good-feedback-text">Well Done!</h3>
+            : <h3 className="bad-feedback-text">Could be better ...</h3> }
+          <div className="div-points">
+            <img src={ star } alt="star-icon" className="star-icon" />
+            <span className="header-score">{ score }</span>
+          </div>
+        </div>
+        <div>
+          <h2>FINAL SCORE</h2>
+          <div className="div-points">
+            <img src={ star } alt="star-icon" className="star-icon" />
+            {score}
+          </div>
+          <h4>{`Assertion: ${assertions}`}</h4>
+        </div>
+        <div>
+          <button
+            type="button"
+            className="btn-play-again"
+            onClick={ this.buttonPlayAgain }
+          >
+            Play Again
+          </button>
+          <button
+            type="button"
+            className="btn-ranking"
+            onClick={ this.buttonRanking }
+          >
+            Ranking
+          </button>
+        </div>
       </>
     );
   }

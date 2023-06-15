@@ -1,0 +1,45 @@
+.ranking {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  width: 300px;
+}
+
+.div-indiv-ranking {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 30%;
+  height: 90px;
+  background-color: rgba(255, 255, 255, 0.432);
+  color: black;
+  border-radius: 45px;
+  margin: 1%;
+  padding: 1px;
+}
+
+.div-points-ranking {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25%;
+  height: 90px;
+  background-color: rgba(255, 255, 255, 0.747);
+  border-radius: 45px;
+  font-weight: 900;
+}
+
+.img-gravatar-ranking {
+  width: 80px;
+  border-radius: 50%;
+}
+
+.btn-go-home {
+  margin: 3%;
+  background-color: rgb(0, 0, 201);
+  color: white;
+  border-radius: 10px;
+  width: 15%;
+  height: 60px;
+  font-size: 25px;
+  border: 3px solid white;
+}

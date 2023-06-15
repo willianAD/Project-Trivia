@@ -1,0 +1,78 @@
+header {
+  margin-top: 2%;
+}
+
+.img-gravatar {
+  width: 130px;
+  border-radius: 50%;
+}
+
+.header-player-name {
+  text-align: center;
+}
+
+.div-points-game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.answer-options {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 4%;
+}
+
+.button-answer {
+  padding: 1%;
+  border-radius: 7px;
+  font-size: 25px;
+  background-color: rgb(0, 0, 0);
+  color: white;
+}
+
+.header-player-name {
+  font-size: 25px;
+  color: rgb(34, 255, 34);
+}
+
+.header-player-score {
+  font-size: 20px;
+}
+
+.header-score {
+  font-size: 45px;
+  font-weight: 700;
+  padding: 7px;
+  color: rgb(0, 0, 201);
+}
+
+.question-category {
+  margin: 2%;
+  font-size: 23px;
+}
+
+.question-text {
+ font-size: 50px;
+}
+
+.button-next {
+  width: 100px;
+  height: 40px;
+  border-radius: 7px;
+  font-weight: 1000;
+  font-size: 20px;
+  color: white;
+  background-color: rgb(6, 240, 15);
+  border: 0;
+}
+
+.div-timer {
+  margin-top: 7%;
+  margin-bottom: 2%;
+  background-color: rgb(255, 0, 0);
+  width: 20%;
+  border-radius: 50%;
+  padding: 1%;
+}

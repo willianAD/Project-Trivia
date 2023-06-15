@@ -1,6 +1,7 @@
 .App {
   align-items: center;
-  background-color: #282c34;
+  background-image: url('./images/fundo.jpeg');
+  background-size: 100%;
   color: white;
   display: flex;
   flex-direction: column;

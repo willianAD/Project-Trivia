@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import { connect } from 'react-redux';
 import { fetchAPIquestion, fetchGravatar, changePoints } from '../redux/action';
+import star from '../images/star-icon.png';
+import '../styles/game.css';
+import '../styles/loading.css';
 
 class GamePage extends React.Component {
   constructor() {
@@ -88,8 +91,8 @@ class GamePage extends React.Component {
     const hard = 3;
     const testId = target.getAttribute('data-testid');
     const correctAnswer = 'correct-answer';
-    const greenBorder = '3px solid rgb(6, 240, 15)';
-    const redBorder = '3px solid red';
+    const greenBorder = '5px solid rgb(6, 240, 15)';
+    const redBorder = '5px solid red';
     if (testId === correctAnswer && questionLevel === 'easy') {
       this.setState((prevState) => ({
         greenButton: { border: greenBorder },
@@ -125,8 +128,8 @@ class GamePage extends React.Component {
       });
     } else {
       this.setState(() => ({
-        greenButton: { border: '3px solid rgb(6, 240, 15)' },
-        redButton: { border: '3px solid red' },
+        greenButton: { border: '5px solid rgb(6, 240, 15)' },
+        redButton: { border: '5px solid red' },
         buttonClickNext: true,
       })); const { name, score, email, assertions } = this.state;
       dispatch(changePoints({ score, name, email, assertions }));
@@ -162,18 +165,20 @@ class GamePage extends React.Component {
     return (
       <>
         <header>
-          <img src={ `https://www.gravatar.com/avatar/${this.getGravatar()}` } alt="Imagem de perfil" data-testid="header-profile-picture" />
-          <p data-testid="header-player-name">{ name }</p>
-          <span>Score: </span>
-          <span data-testid="header-score">{ score }</span>
+          <img src={ `https://www.gravatar.com/avatar/${this.getGravatar()}` } alt="Imagem de perfil" className="img-gravatar" />
+          <p className="header-player-name">{ name }</p>
+          <div className="div-points-game">
+            <img src={ star } alt="star-icon" className="star-icon" />
+            <span className="header-score">{ score }</span>
+          </div>
         </header>
         { !loading
-          ? <p>LOADING...</p>
+          ? <div className="loading"><p>LOADING...</p></div>
           : (
             <section>
-              <p data-testid="question-category">{ arrayAPI[index].category }</p>
-              <p data-testid="question-text">{ arrayAPI[index].question }</p>
-              <span data-testid="answer-options">
+              <p className="question-category">{ arrayAPI[index].category }</p>
+              <p className="question-text">{ arrayAPI[index].question }</p>
+              <div className="answer-options">
                 { answers.map((answer, i) => (
                   (answer !== arrayAPI[index].correct_answer)
                     ? (
@@ -182,6 +187,7 @@ class GamePage extends React.Component {
                         type="button"
                         style={ redButton }
                         onClick={ this.buttonClick }
+                        className="button-answer"
                         data-testid={ `wrong-answer-${i}` }
                         disabled={ buttonDisabled }
                         nivel={ arrayAPI[index].difficulty }
@@ -195,6 +201,7 @@ class GamePage extends React.Component {
                         type="button"
                         style={ greenButton }
                         onClick={ this.buttonClick }
+                        className="button-answer"
                         data-testid="correct-answer"
                         disabled={ buttonDisabled }
                         nivel={ arrayAPI[index].difficulty }
@@ -203,27 +210,21 @@ class GamePage extends React.Component {
                       </button>
                     )
                 ))}
-              </span>
+              </div>
               { buttonClickNext
                 ? (
-                  <div>
-                    <button
-                      type="button"
-                      data-testid="btn-next"
-                      onClick={ this.buttonNext }
-                    >
-                      Next
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="button-next"
+                    onClick={ this.buttonNext }
+                  >
+                    NEXT
+                  </button>
                 )
-                : (
-                  <p> </p>
-                )}
-              <div>
-                <h6>Tempo</h6>
-                <h4>
-                  { timer }
-                </h4>
+                : null}
+              <div className="div-timer">
+                <h6>TEMPO</h6>
+                <h1>{ timer }</h1>
               </div>
             </section>
           )}

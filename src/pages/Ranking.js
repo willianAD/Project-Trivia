@@ -1,18 +1,19 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import rankingImg from '../images/ranking.png';
+import star from '../images/star-icon.png';
+import '../styles/ranking.css';
 
 class Ranking extends Component {
   constructor() {
     super();
     this.state = {
       ranking: [],
-      // scoreOrder: [],
     };
   }
 
   componentDidMount() {
     const ranking = JSON.parse(localStorage.getItem('ranking'));
-    // const score = ranking.map((player) => player.score);
     const scoreOrder = ranking.sort((a, b) => b.score - a.score);
     this.setState({
       ranking: scoreOrder,
@@ -26,21 +27,22 @@ class Ranking extends Component {
 
   render() {
     const { ranking } = this.state;
-    // console.log(ranking);
-    // console.log(scoreOrder);
     return (
       <>
-        <h1 data-testid="ranking-title">Ranking</h1>
+        <img src={ rankingImg } alt="ranking" className="ranking" />
         { ranking.map((player, index) => (
-          <div key={ index }>
-            <img src={ player.picture } alt="Gravatar" />
+          <div key={ index } className="div-indiv-ranking">
+            <img src={ player.picture } alt="Gravatar" className="img-gravatar-ranking" />
             <p data-testid={ `player-name-${index}` }>{ player.name }</p>
-            <p data-testid={ `player-score-${index}` }>{ player.score }</p>
+            <div className="div-points-ranking">
+              <img src={ star } alt="star-icon" className="star-icon" />
+              <span data-testid={ `player-score-${index}` }>{ player.score }</span>
+            </div>
           </div>
         ))}
         <button
           type="button"
-          data-testid="btn-go-home"
+          className="btn-go-home"
           onClick={ () => this.handleButton() }
         >
           Voltar ao Início

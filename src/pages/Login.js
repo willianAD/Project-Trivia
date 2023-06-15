@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { userLogin, fetchAPItoken, tokenAPI, changePoints } from '../redux/action';
+import '../styles/login.css';
 
 class Login extends React.Component {
   constructor() {
@@ -26,6 +26,7 @@ class Login extends React.Component {
     const { name, email } = this.state;
     const rejexEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const validate = (rejexEmail.test(email) && name.length > 0);
+
     this.setState({
       buttonDisable: !validate,
     });
@@ -35,26 +36,29 @@ class Login extends React.Component {
     const { history, dispatch } = this.props;
     const { email, name, score, assertion } = this.state;
     const myToken = await fetchAPItoken();
+
     localStorage.setItem('token', (myToken.token));
     localStorage.setItem('name', (name));
     localStorage.setItem('email', (email));
+
     dispatch(tokenAPI(myToken));
     dispatch(userLogin({ email, name }));
     dispatch(changePoints({ email, name, score, assertion }));
+
     history.push('/gamepage');
   };
 
   render() {
     const { name, email, buttonDisable } = this.state;
     return (
-      <section>
+      <section className="login">
         <label htmlFor="email">
           <input
             id="email"
             name="email"
             type="email"
             data-testid="input-gravatar-email"
-            placeholder="digite seu email"
+            placeholder="Type your e-mail"
             value={ email }
             onChange={ this.handleChange }
           />
@@ -65,7 +69,7 @@ class Login extends React.Component {
             name="name"
             type="text"
             data-testid="input-player-name"
-            placeholder="digite seu name"
+            placeholder="Type your name"
             value={ name }
             onChange={ this.handleChange }
           />
@@ -73,20 +77,12 @@ class Login extends React.Component {
         <button
           type="button"
           data-testid="btn-play"
+          className="button-play"
           disabled={ buttonDisable }
           onClick={ this.buttonClick }
         >
-          Play
+          PLAY
         </button>
-        <Link to="/settings">
-          <button
-            className="btn-settings"
-            type="button"
-            data-testid="btn-settings"
-          >
-            Configurações
-          </button>
-        </Link>
       </section>
     );
   }
